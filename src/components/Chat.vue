@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue'
 import ChatHeader from './ChatHeader.vue'
+import { useApi } from '@/composables/useApi.js'
+const { postPrompt } = useApi()
 
 const prompt = ref("")
 const messages = ref([])
@@ -30,12 +32,7 @@ async function ask() {
   resetTextarea()
 
   try {
-    const res = await fetch(`${baseUrl}/api/chat/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: prompt.value })
-    })
-    const data = await res.json()
+    const data = await postPrompt(prompt.value)
     const reply = data?.content?.[0]?.text || "No response."
     messages.value.push({ role: "assistant", content: reply })
   } catch (e) {
