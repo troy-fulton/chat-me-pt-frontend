@@ -109,7 +109,7 @@ async function ask() {
         @input="autoResize"
         rows="1"
         placeholder="Ask anything"
-        class="chat-input overflow-hidden resize-none bg-gray-50 border border-gray-200 dark:bg-gray-900 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+        class="chat-input overflow-hidden resize-none bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-gray-100"
         @keydown.enter.exact.prevent="ask"
       ></textarea>
     </div>
