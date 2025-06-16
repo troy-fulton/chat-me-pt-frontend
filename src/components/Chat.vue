@@ -72,7 +72,7 @@ async function loadMessages(conversationId) {
 </script>
 
 <template>
-  <div :class="['chat-container min-h-screen', { shifted: sidebarOpen && !isMobile }]">
+  <div :class="['chat-container', { shifted: sidebarOpen && !isMobile }]">
     <!-- Messages -->
     <div class="chat-messages flex-1 overflow-y-auto">
       <div
@@ -102,7 +102,7 @@ async function loadMessages(conversationId) {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 90vh;
   transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 .shifted {
@@ -130,7 +130,5 @@ async function loadMessages(conversationId) {
 .chat-input-wrapper {
   width: 100%;
   padding: 0.5rem 1rem;
-  margin-top: 1.5rem;
-  margin-bottom: 5rem;
 }
 </style>
