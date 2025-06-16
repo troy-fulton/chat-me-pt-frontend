@@ -63,7 +63,13 @@ watch(collapsed, (val) => {
       <div v-else-if="error" class="sidebar-error p-4 text-red-500 dark:text-red-400">{{ error }}</div>
       <ul>
         <li v-for="conv in conversations" :key="conv.id">
-          <button @click="selectConversation(conv.id)" class="sidebar-item w-full text-left px-4 py-2 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-100">
+          <button
+            @click="selectConversation(conv.id)"
+            :class="[
+              'sidebar-item w-full text-left px-4 py-2 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-100',
+              conv.id === $attrs['selected-conversation-id'] ? 'bg-zinc-100 dark:bg-zinc-700 font-bold' : ''
+            ]"
+          >
             {{ conv.title || 'Untitled' }}
           </button>
         </li>

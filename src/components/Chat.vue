@@ -66,9 +66,6 @@ onMounted(() => {
 
 <template>
   <div :class="['chat-container min-h-screen', { shifted: sidebarOpen }]">
-    <div v-if="conversationId" class="text-xs text-zinc-500 dark:text-zinc-400 px-4 pt-2 pb-1 text-center">
-      Conversation ID: <span class="font-mono">{{ conversationId }}</span>
-    </div>
     <!-- Messages -->
     <div class="chat-messages flex-1 overflow-y-auto">
       <div

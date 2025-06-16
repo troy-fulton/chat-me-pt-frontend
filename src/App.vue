@@ -47,7 +47,11 @@ function onSidebarCollapse(state) {
       <Welcome @done="onWelcomeDone" />
     </div>
     <div v-else class="main-layout flex h-[calc(100vh-4rem)]">
-      <ConversationList @select="onSelectConversation" @update:collapsed="onSidebarCollapse" />
+      <ConversationList
+        @select="onSelectConversation"
+        @update:collapsed="onSidebarCollapse"
+        :selected-conversation-id="selectedConversation"
+      />
       <div class="flex-1 min-w-0">
         <Chat :conversation-id="selectedConversation" :sidebar-open="!sidebarCollapsed" />
       </div>
