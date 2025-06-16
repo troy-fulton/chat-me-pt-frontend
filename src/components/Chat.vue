@@ -6,6 +6,8 @@ import axios from 'axios'
 
 const prompt = ref("")
 const messages = ref([])
+const isMobile = ref(window.innerWidth <= 768)
+
 const props = defineProps({
   conversationId: {
     type: [String, Number],
@@ -18,6 +20,19 @@ const props = defineProps({
 })
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL
+
+function handleResize() {
+  isMobile.value = window.innerWidth <= 768
+}
+
+onMounted(() => {
+  if (props.conversationId) loadMessages(props.conversationId)
+  window.addEventListener('resize', handleResize)
+})
+
+watch(() => props.conversationId, (id) => {
+  loadMessages(id)
+}, { immediate: true })
 
 async function ask() {
   if (!prompt.value.trim() || !props.conversationId) return
@@ -54,18 +69,10 @@ async function loadMessages(conversationId) {
     messages.value = [{ role: 'system', content: 'Failed to load messages.' }]
   }
 }
-
-watch(() => props.conversationId, (id) => {
-  loadMessages(id)
-}, { immediate: true })
-
-onMounted(() => {
-  if (props.conversationId) loadMessages(props.conversationId)
-})
 </script>
 
 <template>
-  <div :class="['chat-container min-h-screen', { shifted: sidebarOpen }]">
+  <div :class="['chat-container min-h-screen', { shifted: sidebarOpen && !isMobile }]">
     <!-- Messages -->
     <div class="chat-messages flex-1 overflow-y-auto">
       <div

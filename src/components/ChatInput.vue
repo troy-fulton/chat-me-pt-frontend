@@ -58,8 +58,7 @@ function onKeydown(e) {
   padding: 1rem;
   display: flex;
   gap: 0.5rem;
-  margin-left: 10%;
-  margin-right: 10%;
+  justify-content: center;
 }
 .chat-input {
   flex: 1;
@@ -69,13 +68,22 @@ function onKeydown(e) {
   outline: none;
   transition: box-shadow 0.2s, border-color 0.2s;
   color: inherit;
-  margin-left: 25%;
-  margin-right: 25%;
   max-height: calc(1.5em * 5);
   line-height: 1.5;
+  max-width: 40rem; /* Use rem for max width, not percent or px */
+  width: 100%;      /* Always take full width of parent */
+  box-sizing: border-box;
 }
 .chat-input:focus {
   box-shadow: 0 0 0 2px #2563eb33;
   border-color: #2563eb;
+}
+@media (max-width: 640px) {
+  .chat-input-row {
+    padding: 0.5rem;
+  }
+  .chat-input {
+    max-width: 100vw;
+  }
 }
 </style>
