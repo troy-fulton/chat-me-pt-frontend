@@ -63,6 +63,9 @@ async function createConversation() {
 function selectConversation(id) {
   emit('select', id)
 }
+
+// Expose fetchConversations for parent to call
+defineExpose({ fetchConversations })
 </script>
 
 <template>

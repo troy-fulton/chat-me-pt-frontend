@@ -18,6 +18,7 @@ const props = defineProps({
     default: true
   }
 })
+const emit = defineEmits(['update:conversationId'])
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL
 
@@ -35,7 +36,19 @@ watch(() => props.conversationId, (id) => {
 }, { immediate: true })
 
 async function ask() {
-  if (!prompt.value.trim() || !props.conversationId) return
+  if (!prompt.value.trim()) return
+  let conversationId = props.conversationId
+  // If no conversationId, create a new conversation first
+  if (!conversationId) {
+    try {
+      const res = await axios.post(`${baseUrl}/api/conversations/`, {}, { withCredentials: true })
+      conversationId = res.data.id || res.data.conversation_id
+      emit('update:conversationId', conversationId)
+    } catch (e) {
+      messages.value.push({ role: 'system', content: 'Failed to start a new conversation.' })
+      return
+    }
+  }
   const userMsg = { role: 'visitor', content: prompt.value }
   // Defensive: ensure messages.value is always an array
   if (!Array.isArray(messages.value)) messages.value = []
@@ -45,7 +58,7 @@ async function ask() {
   try {
     const res = await axios.post(
       `${baseUrl}/api/chat/`,
-      { message: input, conversation_id: props.conversationId },
+      { message: input, conversation_id: conversationId },
       { withCredentials: true }
     )
     messages.value.push({ role: 'assistant', content: res.data.response })

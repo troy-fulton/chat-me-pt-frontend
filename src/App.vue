@@ -10,6 +10,7 @@ const showWelcome = ref(false)
 const baseUrl = import.meta.env.VITE_API_BASE_URL
 const selectedConversation = ref(null)
 const sidebarCollapsed = ref(false)
+const conversationListRef = ref(null)
 
 async function checkVisitor() {
   try {
@@ -38,6 +39,15 @@ function onSelectConversation(id) {
 function onSidebarCollapse(state) {
   sidebarCollapsed.value = state
 }
+
+function onUpdateConversationId(id) {
+  selectedConversation.value = id
+  // If ConversationList is present, refresh its conversations
+  // Use a ref to ConversationList and call a method to refresh
+  if (conversationListRef.value && conversationListRef.value.fetchConversations) {
+    conversationListRef.value.fetchConversations()
+  }
+}
 </script>
 
 <template>
@@ -48,12 +58,13 @@ function onSidebarCollapse(state) {
     </div>
     <div v-else>
       <ConversationList
+        ref="conversationListRef"
         @select="onSelectConversation"
         @update:collapsed="onSidebarCollapse"
         :selected-conversation-id="selectedConversation"
       />
       <div>
-        <Chat :conversation-id="selectedConversation" :sidebar-open="!sidebarCollapsed" />
+        <Chat :conversation-id="selectedConversation" :sidebar-open="!sidebarCollapsed" @update:conversationId="onUpdateConversationId" />
       </div>
     </div>
   </div>
