@@ -20,7 +20,6 @@ import ThemeToggle from './ThemeToggle.vue'
   padding: 1rem;
   position: sticky;
   top: 0;
-  z-index: 50;
   background: inherit;
 }
 
