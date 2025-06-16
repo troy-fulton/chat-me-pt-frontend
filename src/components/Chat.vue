@@ -24,9 +24,9 @@ async function ask() {
 </script>
 
 <template>
-  <div class="chat-container min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
+  <div class="chat-container min-h-screen">
     <!-- Messages -->
-    <div class="chat-messages">
+    <div class="chat-messages flex-1 overflow-y-auto">
       <div
         v-for="(msg, i) in messages"
         :key="i"
@@ -41,9 +41,11 @@ async function ask() {
       </div>
     </div>
     <!-- Input -->
-    <ChatInput v-model="prompt" @send="ask" />
-    <div class="chat-disclaimer">
-      Chat✨Me✨PT can make mistakes. Check important info.
+    <div class="chat-input-wrapper sticky bottom-0 bg-inherit z-10">
+      <ChatInput v-model="prompt" @send="ask" :rows="3" />
+      <div class="chat-disclaimer text-gray-500 dark:text-gray-400 text-center text-sm mt-2 mb-2">
+        Chat✨Me✨PT can make mistakes. Check important info.
+      </div>
     </div>
   </div>
 </template>
@@ -73,9 +75,10 @@ async function ask() {
 .chat-message-row-assistant {
   justify-content: flex-start;
 }
-.chat-disclaimer {
-  margin-bottom: 1rem;
-  text-align: center;
-  font-size: 0.875rem;
+.chat-input-wrapper {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  margin-top: 1.5rem;
+  margin-bottom: 5rem;
 }
 </style>

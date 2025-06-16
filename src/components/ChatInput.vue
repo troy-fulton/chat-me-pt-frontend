@@ -3,6 +3,10 @@ import { ref, watch, nextTick } from 'vue'
 
 const props = defineProps({
   modelValue: String,
+  rows: {
+    type: Number,
+    default: 1
+  }
 })
 const emit = defineEmits(['update:modelValue', 'send'])
 const textarea = ref(null)
@@ -42,7 +46,7 @@ function onKeydown(e) {
       :value="modelValue"
       @input="onInput"
       @keydown="onKeydown"
-      rows="1"
+      :rows="rows"
       placeholder="Ask anything"
       class="chat-input overflow-hidden resize-none bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-gray-100"
     ></textarea>

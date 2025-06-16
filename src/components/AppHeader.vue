@@ -23,6 +23,9 @@ import ThemeToggle from './ThemeToggle.vue'
 .chat-title {
   font-size: 2rem;
   font-weight: bold;
+  margin: 0 auto;
+  flex: 1;
+  text-align: center;
 }
 
 .app-header-animate {

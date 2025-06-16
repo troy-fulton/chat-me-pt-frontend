@@ -1,6 +1,6 @@
 <script setup>
 import axios from 'axios'
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch } from 'vue'
 
 const emit = defineEmits(['done'])
 
@@ -21,7 +21,6 @@ async function submitForm() {
   loading.value = true
   error.value = ''
   try {
-    
     await axios.post(`${baseUrl}/api/welcome/`, {
       name: name.value,
       interests: interests.value.join(','),
@@ -44,19 +43,6 @@ function skip() {
 
 watch(submitted, (val) => {
   if (val) emit('done')
-})
-
-onMounted(async () => {
-  try {
-    const res = await axios.get(`${baseUrl}/api/welcome/`, {
-      withCredentials: true
-    })
-    if (res.data && res.data.visitor_exists) {
-      emit('done')
-    }
-  } catch (e) {
-    // Optionally handle error, but don't block the welcome screen
-  }
 })
 </script>
 
