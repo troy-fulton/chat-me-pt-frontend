@@ -108,7 +108,7 @@ defineExpose({ fetchConversations })
                   @click="selectConversation(conv.id); if (isMobile) collapsed = true"
                   :class=" [
                     'sidebar-item w-full text-left px-4 py-2 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 text-zinc-800 dark:text-zinc-100',
-                    conv.id === $attrs['selected-conversation-id'] ? 'bg-zinc-100 dark:bg-zinc-700 font-bold' : ''
+                    conv.id === $attrs['selected-conversation-id'] ? 'bg-blue-100 dark:bg-zinc-700 font-bold' : ''
                   ]"
                 >
                   {{ conv.title || 'Untitled' }}
