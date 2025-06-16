@@ -18,6 +18,10 @@ import ThemeToggle from './ThemeToggle.vue'
   justify-content: space-between;
   gap: 0.5rem;
   padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: inherit;
 }
 
 .chat-title {
