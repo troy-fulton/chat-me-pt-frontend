@@ -2,6 +2,7 @@
 import { ref, watch, onMounted } from 'vue'
 import ChatInput from './ChatInput.vue'
 import ChatBubbleGroup from './ChatBubbleGroup.vue'
+import AppHeader from './AppHeader.vue'
 import axios from 'axios'
 
 const prompt = ref("")
@@ -86,6 +87,7 @@ async function loadMessages(conversationId) {
 
 <template>
   <div :class="['chat-container', { shifted: sidebarOpen && !isMobile }]">
+    <AppHeader />
     <!-- Messages -->
     <div class="chat-messages flex-1 overflow-y-auto">
       <div
@@ -115,7 +117,7 @@ async function loadMessages(conversationId) {
 .chat-container {
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  height: 100vh;
   transition: margin-left 0.3s cubic-bezier(0.4,0,0.2,1);
 }
 .shifted {

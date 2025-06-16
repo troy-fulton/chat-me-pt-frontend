@@ -52,7 +52,6 @@ function onUpdateConversationId(id) {
 
 <template>
   <div>
-    <AppHeader />
     <div v-if="showWelcome">
       <Welcome @done="onWelcomeDone" />
     </div>
