@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue'
-import ChatHeader from './ChatHeader.vue'
 import ChatInput from './ChatInput.vue'
 import ChatBubbleGroup from './ChatBubbleGroup.vue'
 import { useApi } from '@/composables/useApi.js'
@@ -26,8 +25,6 @@ async function ask() {
 
 <template>
   <div class="chat-container min-h-screen bg-gray-100 text-gray-900 dark:bg-gray-900 dark:text-gray-100">
-    <!-- Header -->
-    <ChatHeader />
     <!-- Messages -->
     <div class="chat-messages">
       <div

@@ -14,7 +14,8 @@ export function useApi() {
     try {
       const res = await axios.post(
         `${baseURL}/api/chat/?conversation_id=${conversation_id}`,
-        { message: prompt }
+        { message: prompt },
+        { withCredentials: true }
       )
       return res.data.response
     } catch (err) {

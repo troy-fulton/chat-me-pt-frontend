@@ -3,7 +3,7 @@ import ThemeToggle from './ThemeToggle.vue'
 </script>
 
 <template>
-  <div class="chat-header chat-header-animate">
+  <div class="app-header">
     <span class="chat-title text-blue-600 dark:text-blue-300">
        Chat✨Me✨PT
     </span>
@@ -12,7 +12,7 @@ import ThemeToggle from './ThemeToggle.vue'
 </template>
 
 <style scoped>
-.chat-header {
+.app-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -25,7 +25,7 @@ import ThemeToggle from './ThemeToggle.vue'
   font-weight: bold;
 }
 
-.chat-header-animate {
+.app-header-animate {
   transition: background 0.3s, color 0.3s;
 }
 </style>
