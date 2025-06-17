@@ -17,7 +17,7 @@ const interestOptions = [
   { label: "Troy's personal life", value: 'personal' }
 ]
 
-async function submitForm() {
+async function submitData() {
   loading.value = true
   error.value = ''
   try {
@@ -37,8 +37,12 @@ async function submitForm() {
   }
 }
 
-function skip() {
-  submitted.value = true
+async function submitForm() {
+  await submitData()
+}
+
+async function skip() {
+  await submitData()
 }
 
 watch(submitted, (val) => {
