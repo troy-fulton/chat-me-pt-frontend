@@ -24,6 +24,8 @@ onMounted(() => {
   window.addEventListener('resize', handleResize)
   // Initial collapse if mobile
   if (isMobile.value) collapsed.value = true
+  // Listen for refresh-conversations event from Chat.vue
+  window.addEventListener('refresh-conversations', fetchConversations)
 })
 
 watch(isMobile, (val) => {

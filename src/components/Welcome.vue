@@ -12,11 +12,6 @@ const loading = ref(false)
 const submitted = ref(false)
 const error = ref('')
 
-const interestOptions = [
-  { label: "Troy's professional life", value: 'professional' },
-  { label: "Troy's personal life", value: 'personal' }
-]
-
 async function submitData() {
   loading.value = true
   error.value = ''

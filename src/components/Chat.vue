@@ -63,6 +63,11 @@ async function ask() {
       { withCredentials: true }
     )
     messages.value.push({ role: 'assistant', content: res.data.response })
+    // Refresh conversation names in sidebar after each visitor message
+    if (typeof window !== 'undefined') {
+      const event = new CustomEvent('refresh-conversations')
+      window.dispatchEvent(event)
+    }
   } catch (e) {
     messages.value.push({ role: 'system', content: 'Error contacting server.' })
   }
@@ -91,8 +96,8 @@ async function loadMessages(conversationId) {
     <!-- Messages -->
     <div class="chat-messages flex-1 overflow-y-auto">
       <div
-        v-for="(msg, i) in messages"
-        :key="i"
+        v-for="(msg, i) in messages.slice(messages.findIndex(m => m.role === 'visitor'))"
+        :key="i + messages.findIndex(m => m.role === 'visitor')"
         class="chat-message-row"
         :class="{
           'chat-message-row-user': msg.role === 'visitor',
