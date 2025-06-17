@@ -53,6 +53,7 @@ function onUpdateConversationId(id) {
 <template>
   <div>
     <div v-if="showWelcome">
+      <AppHeader />
       <Welcome @done="onWelcomeDone" />
     </div>
     <div v-else>
