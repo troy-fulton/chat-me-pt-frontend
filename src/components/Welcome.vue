@@ -23,7 +23,7 @@ async function submitForm() {
   try {
     await axios.post(`${baseUrl}/api/welcome/`, {
       name: name.value,
-      interests: interests.value.join(','),
+      interests: interests.value,
       company: company.value
     }, {
       headers: { 'Content-Type': 'application/json' },
@@ -52,23 +52,21 @@ watch(submitted, (val) => {
     <p class="welcome-description text-zinc-600 dark:text-zinc-300">
       Your AI-powered chat assistant. Ask me anything!
     </p>
+    <p class="welcome-description text-zinc-500 dark:text-zinc-400 text-sm">
+      This information helps guide the robot's answers towards your interests and needs.
+    </p>
     <form v-if="!submitted" @submit.prevent="submitForm" class="welcome-form">
       <div class="welcome-field">
         <label class="welcome-label text-zinc-900 dark:text-zinc-100">What's your name?</label>
         <input v-model="name" class="welcome-input bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border-zinc-300 dark:border-zinc-700" placeholder="Your name" />
       </div>
       <div class="welcome-field">
-        <label class="welcome-label text-zinc-900 dark:text-zinc-100">What are you interested in?</label>
-        <div class="welcome-checkbox-group">
-          <label v-for="opt in interestOptions" :key="opt.value" class="welcome-checkbox-label text-zinc-700 dark:text-zinc-200">
-            <input type="checkbox" :value="opt.value" v-model="interests" class="welcome-checkbox accent-blue-600 dark:accent-blue-400" />
-            {{ opt.label }}
-          </label>
-        </div>
-      </div>
-      <div class="welcome-field">
         <label class="welcome-label text-zinc-900 dark:text-zinc-100">What organization do you represent, if any?</label>
         <input v-model="company" class="welcome-input bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border-zinc-300 dark:border-zinc-700" placeholder="Organization (optional)" />
+      </div>
+      <div class="welcome-field">
+        <label class="welcome-label text-zinc-900 dark:text-zinc-100">What, about Troy, are you interested in?</label>
+        <input v-model="interests" class="welcome-input bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border-zinc-300 dark:border-zinc-700" placeholder="Your Interests (optional)" />
       </div>
       <div class="welcome-actions">
         <button type="submit" :disabled="loading" class="welcome-submit bg-blue-600 dark:bg-blue-500 text-white hover:bg-blue-700 dark:hover:bg-blue-400">{{ loading ? 'Submitting...' : 'Submit' }}</button>
