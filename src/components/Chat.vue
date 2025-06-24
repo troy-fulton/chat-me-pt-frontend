@@ -137,6 +137,11 @@ async function loadMessages(conversationId) {
   gap: 1rem;
   margin-left: 25%;
   margin-right: 25%;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+.chat-messages::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
 }
 .chat-message-row {
   display: flex;

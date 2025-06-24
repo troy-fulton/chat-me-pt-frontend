@@ -53,8 +53,14 @@ async function createConversation() {
   loading.value = true
   error.value = ''
   try {
-    await axios.post(`${baseUrl}/api/conversations/`, {}, { withCredentials: true })
+    const res = await axios.post(`${baseUrl}/api/conversations/`, {}, { withCredentials: true })
     await fetchConversations()
+    // Automatically select the new conversation
+    const newId = res.data.id || res.data.conversation_id
+    if (newId) {
+      emit('select', newId)
+      if (isMobile.value) collapsed.value = true
+    }
   } catch (e) {
     error.value = 'Failed to create conversation.'
   } finally {
