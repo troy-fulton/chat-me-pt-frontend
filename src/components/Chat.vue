@@ -4,6 +4,7 @@ import ChatInput from './ChatInput.vue'
 import ChatBubbleGroup from './ChatBubbleGroup.vue'
 import AppHeader from './AppHeader.vue'
 import axios from 'axios'
+import '@/types/chat.js'
 
 const prompt = ref("")
 const messages = ref([])
@@ -36,6 +37,15 @@ watch(() => props.conversationId, (id) => {
   loadMessages(id)
 }, { immediate: true })
 
+// Helper to update usage bar in AppHeader
+function updateUsageBar() {
+  // Find the AppHeader instance and call fetchUsage if possible
+  const header = document.querySelector('.app-header')
+  if (header && window.__appHeaderFetchUsage) {
+    window.__appHeaderFetchUsage()
+  }
+}
+
 async function ask() {
   if (!prompt.value.trim()) return
   let conversationId = props.conversationId
@@ -62,14 +72,23 @@ async function ask() {
       { message: input, conversation_id: conversationId },
       { withCredentials: true }
     )
-    messages.value.push({ role: 'assistant', content: res.data.response })
+    messages.value.push({ role: 'assistant', content: res.data.response, sources: res.data.sources || [] })
     // Refresh conversation names in sidebar after each visitor message
     if (typeof window !== 'undefined') {
       const event = new CustomEvent('refresh-conversations')
       window.dispatchEvent(event)
+      updateUsageBar()
     }
   } catch (e) {
-    messages.value.push({ role: 'system', content: 'Error contacting server.' })
+    let errorMsg = 'Error contacting server.'
+    if (e.response) {
+      errorMsg = `Error: ${e.response.status}\n${typeof e.response.data === 'string' ? e.response.data : JSON.stringify(e.response.data)}`
+    } else if (e.request) {
+      errorMsg = 'No response received from server. Status code: ' + (e.request.status || 'unknown')
+    } else if (e.message) {
+      errorMsg = e.message
+    }
+    messages.value.push({ role: 'system', content: errorMsg })
   }
 }
 
