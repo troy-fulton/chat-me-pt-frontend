@@ -46,15 +46,6 @@ watch(() => props.conversationId, (id) => {
   }
 }, { immediate: true })
 
-// Helper to update usage bar in AppHeader
-function updateUsageBar() {
-  // Find the AppHeader instance and call fetchUsage if possible
-  const header = document.querySelector('.app-header')
-  if (header && window.__appHeaderFetchUsage) {
-    window.__appHeaderFetchUsage()
-  }
-}
-
 async function ask() {
   if (!prompt.value.trim()) return
   const userMsg = { role: 'visitor', content: prompt.value }

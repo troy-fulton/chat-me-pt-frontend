@@ -8,6 +8,9 @@ const conversations = ref([])
 const collapsed = ref(false)
 const loading = ref(false)
 const error = ref('')
+const usage = ref(null)
+const usageLoading = ref(false)
+const usageError = ref('')
 
 // Mobile detection
 const isMobile = ref(window.innerWidth <= 768)
@@ -21,11 +24,13 @@ function handleResize() {
 
 onMounted(() => {
   fetchConversations()
+  fetchUsage()
   window.addEventListener('resize', handleResize)
   // Initial collapse if mobile
   if (isMobile.value) collapsed.value = true
   // Listen for refresh-conversations event from Chat.vue
   window.addEventListener('refresh-conversations', fetchConversations)
+  window.addEventListener('refresh-conversations', fetchUsage)
 })
 
 watch(isMobile, (val) => {
@@ -46,6 +51,30 @@ async function fetchConversations() {
     error.value = 'Failed to load conversations.'
   } finally {
     loading.value = false
+  }
+}
+
+async function fetchUsage() {
+  usageLoading.value = true
+  usageError.value = ''
+  try {
+    const res = await fetch(`${baseUrl}/api/visitor_usage`, { credentials: 'include' })
+    if (!res.ok) throw new Error('Failed to fetch usage')
+    const data = await res.json()
+    if (data.hourly_limit > 0) {
+      usage.value = {
+        used: data.hourly_limit - data.remaining_tokens,
+        limit: data.hourly_limit,
+        percent: 100 * (1 - data.remaining_tokens / data.hourly_limit)
+      }
+    } else {
+      usage.value = null
+    }
+  } catch {
+    usage.value = null
+    usageError.value = 'Failed to load usage.'
+  } finally {
+    usageLoading.value = false
   }
 }
 
@@ -98,7 +127,24 @@ defineExpose({ fetchConversations })
         ]"
         style="height:100vh;"
       >
-        <div style="height:3.5rem;"></div> <!-- Spacer for sandwich button -->
+        <div style="height:4rem;"></div> <!-- Spacer for sandwich button -->
+        <!-- Usage Progress Bar -->
+        <div class="px-4 mb-2 w-full">
+          <div v-if="usageLoading" class="text-xs text-gray-400">Loading usage...</div>
+          <div v-else-if="usageError" class="text-xs text-red-400">{{ usageError }}</div>
+          <div v-else-if="usage" class="w-full">
+            <div class="flex justify-between items-center mb-1">
+              <span class="text-xs text-gray-500 dark:text-gray-400">Hourly Token Limit</span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">{{ Math.round(usage.percent) }}%</span>
+            </div>
+            <div class="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded">
+              <div
+                class="h-2 bg-blue-500 dark:bg-blue-400 rounded"
+                :style="{ width: usage.percent + '%' }"
+              ></div>
+            </div>
+          </div>
+        </div>
         <div class="sidebar-header flex flex-col items-start px-3 py-2 w-full">
           <button @click="createConversation" :disabled="loading" class="sidebar-plus flex items-center gap-2 p-1 rounded w-full hover:bg-zinc-200 dark:hover:bg-zinc-700 text-blue-600 dark:text-blue-400 mb-2" title="New Conversation">
             <span class="text-xl">📝</span>
@@ -106,6 +152,7 @@ defineExpose({ fetchConversations })
           </button>
           <span class="sidebar-title font-semibold ml-2 mb-2">Chats</span>
         </div>
+        <!-- End Usage Progress Bar -->
         <div class="sidebar-list flex-1 overflow-y-auto">
           <div v-if="loading" class="sidebar-loading p-4 text-zinc-500 dark:text-zinc-400">Loading...</div>
           <div v-else-if="error" class="sidebar-error p-4 text-red-500 dark:text-red-400">{{ error }}</div>
