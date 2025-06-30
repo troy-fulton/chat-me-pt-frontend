@@ -21,7 +21,7 @@ const props = defineProps({
     default: true
   }
 })
-const conversationIdIsNull = ref(props.conversationId === null || props.conversationId === undefined)
+const newConversation = ref(props.conversationId === null || props.conversationId === undefined)
 const emit = defineEmits(['update:conversationId'])
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL
@@ -36,13 +36,13 @@ onMounted(() => {
 })
 
 watch(() => props.conversationId, (id) => {
-  if (!conversationIdIsNull.value) {
+  if (!newConversation.value) {
     console.log('Conversation ID changed:', id)
     loadMessages(id)
   } else {
-    console.log('No conversation ID provided, clearing messages.')
+    console.log('New conversation ID, no need to load messages.')
     // Do nothing
-    conversationIdIsNull.value = true
+    newConversation.value = false
   }
 }, { immediate: true })
 
@@ -59,6 +59,7 @@ async function ask() {
     try {
       const res = await axios.post(`${baseUrl}/api/conversations/`, {}, { withCredentials: true })
       conversationId = res.data.id || res.data.conversation_id
+      newConversation.value = true
       emit('update:conversationId', conversationId)
     } catch (e) {
       messages.value.push({ role: 'system', content: 'Failed to start a new conversation.' })
@@ -111,6 +112,14 @@ async function loadMessages(conversationId) {
     messages.value = data.messages
   } catch (e) {
     messages.value = [{ role: 'system', content: 'Failed to load messages.' }]
+  }
+}
+
+// Helper to update usage bar in ConversationList (was AppHeader)
+function updateUsageBar() {
+  // Find the ConversationList instance and call fetchUsage if possible
+  if (window.__conversationListFetchUsage) {
+    window.__conversationListFetchUsage()
   }
 }
 </script>
