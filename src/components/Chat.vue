@@ -9,6 +9,7 @@ import '@/types/chat.js'
 const prompt = ref("")
 const messages = ref([])
 const isMobile = ref(window.innerWidth <= 768)
+const isAwaitingAssistant = ref(false)
 
 const props = defineProps({
   conversationId: {
@@ -67,6 +68,7 @@ async function ask() {
       return
     }
   }
+  isAwaitingAssistant.value = true
   try {
     const res = await axios.post(
       `${baseUrl}/api/chat/`,
@@ -75,6 +77,7 @@ async function ask() {
     )
     console.log('Response:', res.data)
     messages.value.push({ role: 'assistant', content: res.data.response, sources: res.data.sources || [] })
+    isAwaitingAssistant.value = false
     // Refresh conversation names in sidebar after each visitor message
     if (typeof window !== 'undefined') {
       const event = new CustomEvent('refresh-conversations')
@@ -91,6 +94,7 @@ async function ask() {
       errorMsg = e.message
     }
     messages.value.push({ role: 'system', content: errorMsg })
+    isAwaitingAssistant.value = false
   }
 }
 
@@ -127,6 +131,9 @@ async function loadMessages(conversationId) {
         }"
       >
         <ChatBubbleGroup :msg="msg" />
+      </div>
+      <div v-if="isAwaitingAssistant" class="chat-message-row chat-message-row-assistant">
+        <ChatBubbleGroup :msg="{ role: 'assistant', content: '...', sources: [] }" is-typing />
       </div>
     </div>
     <!-- Input -->

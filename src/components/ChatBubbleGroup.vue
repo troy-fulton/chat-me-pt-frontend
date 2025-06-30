@@ -4,7 +4,8 @@ import '@/types/chat.js'
 
 const props = defineProps({
   /** @type {ChatMessage} */
-  msg: { type: Object, required: true }
+  msg: { type: Object, required: true },
+  isTyping: { type: Boolean, default: false }
 })
 
 const showAllSources = ref(false)
@@ -27,8 +28,8 @@ function getSourceUrl(src) {
         class="error-message-bubble bg-gray-800 text-gray-100 mx-auto flex justify-center"
         style="border-radius: 1.5rem; border-bottom-left-radius: 1.5rem; border-bottom-right-radius: 1.5rem;"
       >
-        <span v-for="(line, idx) in msg.content.split('\n')" :key="idx">
-          {{ line }}<br v-if="idx < msg.content.split('\n').length - 1" />
+        <span v-for="(line, idx) in (msg.content ?? '').toString().split('\n')" :key="idx">
+          {{ line }}<br v-if="idx < (msg.content ?? '').toString().split('\n').length - 1" />
         </span>
       </div>
     </template>
@@ -38,11 +39,18 @@ function getSourceUrl(src) {
         <span>🤖</span>
       </div>
       <div class="chat-message-bubble chat-message-bubble-assistant bg-white text-gray-900 border border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700">
-        <span v-for="(line, idx) in msg.content.split('\n')" :key="idx">
-          {{ line }}<br v-if="idx < msg.content.split('\n').length - 1" />
-        </span>
+        <template v-if="isTyping">
+          <span class="typing-dots">
+            <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+          </span>
+        </template>
+        <template v-else>
+          <span v-for="(line, idx) in (msg.content ?? '').toString().split('\n')" :key="idx">
+            {{ line }}<br v-if="idx < (msg.content ?? '').toString().split('\n').length - 1" />
+          </span>
+        </template>
         <!-- Sources section -->
-        <div v-if="msg.sources && msg.sources.length" class="mt-2">
+        <div v-if="msg.sources && msg.sources.length && !isTyping" class="mt-2">
           <div class="text-xs text-gray-500 dark:text-gray-400 font-medium">Sources:</div>
           <ul>
             <li>
@@ -66,8 +74,8 @@ function getSourceUrl(src) {
       <div
         class="chat-message-bubble chat-message-bubble-user bg-blue-500 text-white dark:bg-blue-600"
       >
-        <span v-for="(line, idx) in msg.content.split('\n')" :key="idx">
-          {{ line }}<br v-if="idx < msg.content.split('\n').length - 1" />
+        <span v-for="(line, idx) in (msg.content ?? '').toString().split('\n')" :key="idx">
+          {{ line }}<br v-if="idx < (msg.content ?? '').toString().split('\n').length - 1" />
         </span>
       </div>
       <div class="chat-avatar bg-blue-500 dark:bg-blue-600">
@@ -113,5 +121,26 @@ function getSourceUrl(src) {
 }
 .chat-message-bubble-assistant {
   border-bottom-left-radius: 0;
+}
+.typing-dots {
+  display: inline-block;
+  font-size: 1.5em;
+  letter-spacing: 0.2em;
+  animation: blink 1.2s infinite steps(1, end);
+}
+.dot {
+  opacity: 0.3;
+  animation: dotBlink 1.2s infinite;
+}
+.dot:nth-child(1) { animation-delay: 0s; }
+.dot:nth-child(2) { animation-delay: 0.2s; }
+.dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes dotBlink {
+  0%, 80%, 100% { opacity: 0.3; }
+  40% { opacity: 1; }
+}
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
 }
 </style>
