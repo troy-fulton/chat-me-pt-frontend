@@ -179,10 +179,18 @@ function updateUsageBar() {
   align-items: center;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+  /* Add space for sticky header */
+  padding-top: 4rem;
+  /* AppHeader height (adjust if needed) */
+  box-sizing: border-box;
 }
 @media (max-width: 640px) {
   .chat-messages {
     max-width: 100vw;
+    width: 100vw;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 4rem;
   }
 }
 .chat-messages::-webkit-scrollbar {
