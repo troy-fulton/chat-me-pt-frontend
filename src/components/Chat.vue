@@ -48,7 +48,14 @@ function updateUsageBar() {
 
 async function ask() {
   if (!prompt.value.trim()) return
+  const userMsg = { role: 'visitor', content: prompt.value }
+  // Defensive: ensure messages.value is always an array
+  if (!Array.isArray(messages.value)) messages.value = []
+  messages.value.push(userMsg)
+  const input = prompt.value
+  prompt.value = ''
   let conversationId = props.conversationId
+  console.log('Asking:', input, 'Conversation ID:', conversationId)
   // If no conversationId, create a new conversation first
   if (!conversationId) {
     try {
@@ -60,18 +67,13 @@ async function ask() {
       return
     }
   }
-  const userMsg = { role: 'visitor', content: prompt.value }
-  // Defensive: ensure messages.value is always an array
-  if (!Array.isArray(messages.value)) messages.value = []
-  messages.value.push(userMsg)
-  const input = prompt.value
-  prompt.value = ''
   try {
     const res = await axios.post(
       `${baseUrl}/api/chat/`,
       { message: input, conversation_id: conversationId },
       { withCredentials: true }
     )
+    console.log('Response:', res.data)
     messages.value.push({ role: 'assistant', content: res.data.response, sources: res.data.sources || [] })
     // Refresh conversation names in sidebar after each visitor message
     if (typeof window !== 'undefined') {
