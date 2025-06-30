@@ -172,16 +172,25 @@ function updateUsageBar() {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-left: 25%;
-  margin-right: 25%;
+  max-width: 40rem;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
+}
+@media (max-width: 640px) {
+  .chat-messages {
+    max-width: 100vw;
+  }
 }
 .chat-messages::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
 }
 .chat-message-row {
   display: flex;
+  width: 100%;
 }
 .chat-message-row-user {
   justify-content: flex-end;
