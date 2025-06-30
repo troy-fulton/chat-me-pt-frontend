@@ -21,6 +21,7 @@ const props = defineProps({
     default: true
   }
 })
+const conversationIdIsNull = ref(props.conversationId === null || props.conversationId === undefined)
 const emit = defineEmits(['update:conversationId'])
 
 const baseUrl = import.meta.env.VITE_API_BASE_URL
@@ -35,7 +36,14 @@ onMounted(() => {
 })
 
 watch(() => props.conversationId, (id) => {
-  loadMessages(id)
+  if (!conversationIdIsNull.value) {
+    console.log('Conversation ID changed:', id)
+    loadMessages(id)
+  } else {
+    console.log('No conversation ID provided, clearing messages.')
+    // Do nothing
+    conversationIdIsNull.value = true
+  }
 }, { immediate: true })
 
 // Helper to update usage bar in AppHeader
@@ -51,8 +59,6 @@ async function ask() {
   if (!prompt.value.trim()) return
   const userMsg = { role: 'visitor', content: prompt.value }
   // Defensive: ensure messages.value is always an array
-  if (!Array.isArray(messages.value)) messages.value = []
-  messages.value.push(userMsg)
   const input = prompt.value
   prompt.value = ''
   let conversationId = props.conversationId
@@ -68,6 +74,9 @@ async function ask() {
       return
     }
   }
+  if (!Array.isArray(messages.value)) messages.value = []
+  console.log('Current messages:', messages.value)
+  messages.value.push(userMsg)
   isAwaitingAssistant.value = true
   try {
     const res = await axios.post(
