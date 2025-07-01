@@ -148,9 +148,6 @@ function updateUsageBar() {
     <!-- Input -->
     <div class="chat-input-wrapper sticky bottom-0 bg-inherit z-10">
       <ChatInput v-model="prompt" @send="ask" :rows="3" />
-      <div class="chat-disclaimer text-gray-500 dark:text-gray-400 text-center text-sm mt-2 mb-2">
-        Chat✨Me✨PT can make mistakes. Check important info.
-      </div>
     </div>
   </div>
 </template>
@@ -169,6 +166,7 @@ function updateUsageBar() {
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
+  padding-bottom: 0 !important;
   display: flex;
   flex-direction: column;
   gap: 1rem;
@@ -179,9 +177,6 @@ function updateUsageBar() {
   align-items: center;
   scrollbar-width: none; /* Firefox */
   -ms-overflow-style: none; /* IE and Edge */
-  /* Add space for sticky header */
-  padding-top: 4rem;
-  /* AppHeader height (adjust if needed) */
   box-sizing: border-box;
 }
 .chat-message-row {
@@ -195,6 +190,7 @@ function updateUsageBar() {
     padding-left: 0.5rem;
     padding-right: 0.5rem;
     padding-top: 4rem;
+    padding-bottom: 0 !important;
   }
   .chat-message-row {
     width: 90%;
@@ -211,6 +207,9 @@ function updateUsageBar() {
 }
 .chat-input-wrapper {
   width: 100%;
-  padding: 0.5rem 1rem;
+  background: var(--color-background, #fff);
+}
+.dark .chat-input-wrapper {
+  background: #101828;
 }
 </style>

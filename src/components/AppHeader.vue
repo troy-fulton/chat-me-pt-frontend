@@ -38,6 +38,6 @@ import ThemeToggle from './ThemeToggle.vue'
 }
 
 .app-header-animate {
-  transition: background 0.3s, color 0.3s;
+  transition: background 0.2s, color 0.2s;
 }
 </style>
