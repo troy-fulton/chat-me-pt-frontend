@@ -22,7 +22,7 @@ import ThemeToggle from './ThemeToggle.vue'
   position: sticky;
   top: 0;
   background: var(--color-background, #fff);
-  z-index: 20;
+  z-index: 10;
 }
 
 .dark .app-header {
