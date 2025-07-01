@@ -4,7 +4,7 @@ import ThemeToggle from './ThemeToggle.vue'
 </script>
 
 <template>
-  <div class="app-header">
+  <div class="app-header dark:">
     <span class="chat-title text-blue-600 dark:text-blue-300">
        Chat✨Me✨PT
     </span>
@@ -21,7 +21,12 @@ import ThemeToggle from './ThemeToggle.vue'
   padding: 1rem;
   position: sticky;
   top: 0;
-  background: inherit;
+  background: var(--color-background, #fff);
+  z-index: 20;
+}
+
+.dark .app-header {
+  background: #101828;
 }
 
 .chat-title {
