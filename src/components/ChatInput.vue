@@ -59,6 +59,7 @@ function onKeydown(e) {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
+  background: var(--color-background, #fff);
 }
 .chat-input {
   flex: 1;
@@ -73,6 +74,10 @@ function onKeydown(e) {
   max-width: 40rem; /* Use rem for max width, not percent or px */
   width: 100%;      /* Always take full width of parent */
   box-sizing: border-box;
+}
+
+.dark .chat-input-row {
+  background: #101828;
 }
 .chat-input:focus {
   box-shadow: 0 0 0 2px #2563eb33;

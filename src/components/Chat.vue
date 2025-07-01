@@ -184,6 +184,10 @@ function updateUsageBar() {
   /* AppHeader height (adjust if needed) */
   box-sizing: border-box;
 }
+.chat-message-row {
+  display: flex;
+  width: 100%;
+}
 @media (max-width: 640px) {
   .chat-messages {
     max-width: 100vw;
@@ -192,13 +196,12 @@ function updateUsageBar() {
     padding-right: 0.5rem;
     padding-top: 4rem;
   }
+  .chat-message-row {
+    width: 90%;
+  }
 }
 .chat-messages::-webkit-scrollbar {
   display: none; /* Chrome, Safari, Opera */
-}
-.chat-message-row {
-  display: flex;
-  width: 90%;
 }
 .chat-message-row-user {
   justify-content: flex-end;
