@@ -198,7 +198,7 @@ function updateUsageBar() {
 }
 .chat-message-row {
   display: flex;
-  width: 100%;
+  width: 90%;
 }
 .chat-message-row-user {
   justify-content: flex-end;
