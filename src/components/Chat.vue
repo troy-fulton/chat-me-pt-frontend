@@ -5,11 +5,13 @@ import ChatBubbleGroup from './ChatBubbleGroup.vue'
 import AppHeader from './AppHeader.vue'
 import axios from 'axios'
 import '@/types/chat.js'
+import AssistantWaitBubble from './AssistantWaitBubble.vue'
 
 const prompt = ref("")
 const messages = ref([])
 const isMobile = ref(window.innerWidth <= 768)
 const isAwaitingAssistant = ref(false)
+const assistantWaitMessage = ref("")
 
 const props = defineProps({
   conversationId: {
@@ -48,55 +50,93 @@ watch(() => props.conversationId, (id) => {
 
 async function ask() {
   if (!prompt.value.trim()) return
-  const userMsg = { role: 'visitor', content: prompt.value }
-  // Defensive: ensure messages.value is always an array
   const input = prompt.value
   prompt.value = ''
   let conversationId = props.conversationId
-  console.log('Asking:', input, 'Conversation ID:', conversationId)
-  // If no conversationId, create a new conversation first
+
+  assistantWaitMessage.value = ""
+  isAwaitingAssistant.value = true
+
+  addUserMessage(input)
+
+  // Call documentQuery and update the message
+  const docRes = await documentQuery(input, conversationId)
+  assistantWaitMessage.value = docRes ? "Searching for: " + docRes : ""
+  console.log("Document query:", assistantWaitMessage.value)
+
+  console.log("Sleeping...")
+  await new Promise(resolve => setTimeout(resolve, 5000))
+
   if (!conversationId) {
-    try {
-      const res = await axios.post(`${baseUrl}/api/conversations/`, {}, { withCredentials: true })
-      conversationId = res.data.id || res.data.conversation_id
-      newConversation.value = true
-      emit('update:conversationId', conversationId)
-    } catch (e) {
-      messages.value.push({ role: 'system', content: 'Failed to start a new conversation.' })
+    conversationId = await startNewConversation()
+    if (!conversationId) {
+      isAwaitingAssistant.value = false
+      assistantWaitMessage.value = ""
       return
     }
   }
-  if (!Array.isArray(messages.value)) messages.value = []
-  console.log('Current messages:', messages.value)
-  messages.value.push(userMsg)
-  isAwaitingAssistant.value = true
+
   try {
-    const res = await axios.post(
-      `${baseUrl}/api/chat/`,
-      { message: input, conversation_id: conversationId },
-      { withCredentials: true }
-    )
-    console.log('Response:', res.data)
-    messages.value.push({ role: 'assistant', content: res.data.response, sources: res.data.sources || [] })
+    const res = await sendMessage(input, conversationId, docRes)
+    addAssistantMessage(res.data)
     isAwaitingAssistant.value = false
-    // Refresh conversation names in sidebar after each visitor message
-    if (typeof window !== 'undefined') {
-      const event = new CustomEvent('refresh-conversations')
-      window.dispatchEvent(event)
-      updateUsageBar()
-    }
+    assistantWaitMessage.value = ""
+    refreshConversations()
+    updateUsageBar()
   } catch (e) {
-    let errorMsg = 'Error contacting server.'
-    if (e.response) {
-      errorMsg = `Error: ${e.response.status}\n${typeof e.response.data === 'string' ? e.response.data : JSON.stringify(e.response.data)}`
-    } else if (e.request) {
-      errorMsg = 'No response received from server. Status code: ' + (e.request.status || 'unknown')
-    } else if (e.message) {
-      errorMsg = e.message
-    }
-    messages.value.push({ role: 'system', content: errorMsg })
+    handleError(e)
     isAwaitingAssistant.value = false
+    assistantWaitMessage.value = ""
   }
+}
+
+async function startNewConversation() {
+  try {
+    const res = await axios.post(`${baseUrl}/api/conversations/`, {}, { withCredentials: true })
+    const id = res.data.id || res.data.conversation_id
+    newConversation.value = true
+    emit('update:conversationId', id)
+    return id
+  } catch (e) {
+    messages.value.push({ role: 'system', content: 'Failed to start a new conversation.' })
+    return null
+  }
+}
+
+function addUserMessage(content) {
+  if (!Array.isArray(messages.value)) messages.value = []
+  messages.value.push({ role: 'visitor', content })
+}
+
+async function sendMessage(message, conversationId, docRes) {
+  return axios.post(
+    `${baseUrl}/api/chat/`,
+    { message, conversation_id: conversationId, document_query: docRes },
+    { withCredentials: true }
+  )
+}
+
+function addAssistantMessage(data) {
+  messages.value.push({ role: 'assistant', content: data.response, sources: data.sources || [] })
+}
+
+function refreshConversations() {
+  if (typeof window !== 'undefined') {
+    const event = new CustomEvent('refresh-conversations')
+    window.dispatchEvent(event)
+  }
+}
+
+function handleError(e) {
+  let errorMsg = 'Error contacting server.'
+  if (e.response) {
+    errorMsg = `Error: ${e.response.status}\n${typeof e.response.data === 'string' ? e.response.data : JSON.stringify(e.response.data)}`
+  } else if (e.request) {
+    errorMsg = 'No response received from server. Status code: ' + (e.request.status || 'unknown')
+  } else if (e.message) {
+    errorMsg = e.message
+  }
+  messages.value.push({ role: 'system', content: errorMsg })
 }
 
 
@@ -113,6 +153,15 @@ async function loadMessages(conversationId) {
   } catch (e) {
     messages.value = [{ role: 'system', content: 'Failed to load messages.' }]
   }
+}
+
+async function documentQuery(message, conversationId) {
+  const res = await axios.post(
+    `${baseUrl}/api/document_query/`,
+    { message: message, conversation_id: conversationId },
+    { withCredentials: true }
+  )
+  return res.data.document_query
 }
 
 // Helper to update usage bar in ConversationList (was AppHeader)
@@ -141,9 +190,7 @@ function updateUsageBar() {
       >
         <ChatBubbleGroup :msg="msg" />
       </div>
-      <div v-if="isAwaitingAssistant" class="chat-message-row chat-message-row-assistant">
-        <ChatBubbleGroup :msg="{ role: 'assistant', content: '...', sources: [] }" is-typing />
-      </div>
+      <AssistantWaitBubble v-if="isAwaitingAssistant" :message="assistantWaitMessage || ''" />
     </div>
     <!-- Input -->
     <div class="chat-input-wrapper sticky bottom-0 bg-inherit z-10">

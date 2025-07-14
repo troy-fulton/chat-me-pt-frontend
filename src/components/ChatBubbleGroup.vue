@@ -40,8 +40,13 @@ function getSourceUrl(src) {
       </div>
       <div class="chat-message-bubble chat-message-bubble-assistant bg-white text-gray-900 border border-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-700">
         <template v-if="isTyping">
+          <span class="typing-message">
+            <span v-for="(letter, idx) in msg.content" :key="idx" class="blink-letter">{{ letter }}</span>
+          </span>
           <span class="typing-dots">
-            <span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
+            <span class="dot">.</span>
           </span>
         </template>
         <template v-else>
@@ -122,11 +127,19 @@ function getSourceUrl(src) {
 .chat-message-bubble-assistant {
   border-bottom-left-radius: 0;
 }
+.typing-message {
+  display: inline-block;
+  animation: blink 1.2s infinite steps(1, end);
+}
 .typing-dots {
   display: inline-block;
   font-size: 1.5em;
   letter-spacing: 0.2em;
   animation: blink 1.2s infinite steps(1, end);
+}
+.blink-letter {
+  opacity: 0.3;
+  animation: dotBlink 1.2s infinite;
 }
 .dot {
   opacity: 0.3;
