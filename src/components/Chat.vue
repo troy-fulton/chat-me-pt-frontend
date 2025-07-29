@@ -59,11 +59,6 @@ async function ask() {
 
   addUserMessage(input)
 
-  // Call documentQuery and update the message
-  const docRes = await documentQuery(input, conversationId)
-  assistantWaitMessage.value = docRes ? "Searching for: " + docRes : ""
-  console.log("Document query:", assistantWaitMessage.value)
-
   if (!conversationId) {
     conversationId = await startNewConversation()
     if (!conversationId) {
@@ -72,6 +67,11 @@ async function ask() {
       return
     }
   }
+
+  // Call documentQuery and update the message
+  const docRes = await documentQuery(input, conversationId)
+  assistantWaitMessage.value = docRes ? "Searching for: " + docRes : ""
+  console.log("Document query:", assistantWaitMessage.value)
 
   try {
     const res = await sendMessage(input, conversationId, docRes)
