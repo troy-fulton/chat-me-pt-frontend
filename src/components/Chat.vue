@@ -64,9 +64,6 @@ async function ask() {
   assistantWaitMessage.value = docRes ? "Searching for: " + docRes : ""
   console.log("Document query:", assistantWaitMessage.value)
 
-  console.log("Sleeping...")
-  await new Promise(resolve => setTimeout(resolve, 5000))
-
   if (!conversationId) {
     conversationId = await startNewConversation()
     if (!conversationId) {
