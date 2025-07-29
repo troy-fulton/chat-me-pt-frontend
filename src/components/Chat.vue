@@ -69,9 +69,17 @@ async function ask() {
   }
 
   // Call documentQuery and update the message
-  const docRes = await documentQuery(input, conversationId)
-  assistantWaitMessage.value = docRes ? "Searching for: " + docRes : ""
-  console.log("Document query:", assistantWaitMessage.value)
+  let docRes = null
+  try {
+    docRes = await documentQuery(input, conversationId)
+    assistantWaitMessage.value = docRes ? "Searching for: " + docRes : ""
+    console.log("Document query:", assistantWaitMessage.value)
+  } catch (e) {
+    handleError(e)
+    isAwaitingAssistant.value = false
+    assistantWaitMessage.value = ""
+    return
+  }
 
   try {
     const res = await sendMessage(input, conversationId, docRes)
