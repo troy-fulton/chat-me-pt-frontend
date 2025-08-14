@@ -30,26 +30,32 @@ function onInput(e) {
   emit('update:modelValue', e.target.value)
   autoResize()
 }
-
-function onKeydown(e) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault()
-    emit('send')
-  }
-}
 </script>
 
 <template>
   <div class="chat-input-row">
-    <textarea
-      ref="textarea"
-      :value="modelValue"
-      @input="onInput"
-      @keydown="onKeydown"
-      :rows="rows"
-      placeholder="Ask anything"
-      class="chat-input overflow-hidden resize-none bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-gray-100"
-    ></textarea>
+    <div class="chat-input-wrapper" style="position: relative; width: 100%;">
+      <textarea
+        ref="textarea"
+        :value="modelValue"
+        @input="onInput"
+        :rows="rows"
+        placeholder="Ask anything"
+        class="chat-input overflow-hidden resize-none bg-white border border-gray-200 dark:bg-gray-800 dark:border-gray-700 text-gray-900 dark:text-gray-100"
+        style="width: 100%;"
+      ></textarea>
+      <button
+        class="chat-send-btn"
+        @click="emit('send')"
+        aria-label="Send message"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" style="display: block; margin: auto; transform: rotate(180deg);">
+          <circle cx="12" cy="12" r="12" fill="#2563eb" />
+          <polyline points="12,6 12,18" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+          <polyline points="7,13 12,18 17,13" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+        </svg>
+      </button>
+    </div>
   </div>
   <div class="chat-disclaimer text-gray-500 dark:text-gray-400 text-center text-sm mt-2 mb-2">
     Chat✨Me✨PT can make mistakes. Check important info.
@@ -63,6 +69,11 @@ function onKeydown(e) {
   gap: 0.5rem;
   justify-content: center;
 }
+.chat-input-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+}
 .chat-input {
   flex: 1;
   resize: none;
@@ -73,20 +84,42 @@ function onKeydown(e) {
   color: inherit;
   max-height: calc(1.5em * 5);
   line-height: 1.5;
-  max-width: 40rem; /* Use rem for max width, not percent or px */
-  width: 100%;      /* Always take full width of parent */
+  width: 100%;
   box-sizing: border-box;
 }
-.chat-input:focus {
-  box-shadow: 0 0 0 2px #2563eb33;
-  border-color: #2563eb;
+.chat-send-btn {
+  position: absolute;
+  bottom: 0.9rem;
+  right: 0.5rem;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  cursor: pointer;
+}
+.chat-send-btn:active {
+  background: #1741a6;
 }
 @media (max-width: 640px) {
   .chat-input-row {
     padding: 0.5rem;
   }
+  .chat-input-wrapper {
+    max-width: 100vw;
+  }
   .chat-input {
     max-width: 100vw;
+  }
+  .chat-send-btn {
+    bottom: 0.9rem;
+    right: 0.5rem;
   }
 }
 </style>
